@@ -17,3 +17,13 @@ export async function create(request: Request, response: Response) {
 
   response.send(newFlow);
 }
+
+export async function destroy(request: Request, response: Response) {
+  const flowRespository = getManager().getRepository(Flow);
+
+  const flow = await flowRespository.findOne(request.params.id);
+
+  await flowRespository.delete(flow);
+
+  response.send(flow);
+}

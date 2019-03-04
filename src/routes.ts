@@ -16,5 +16,10 @@ export const AppRoutes = [
     path: "/flows",
     method: "post",
     action: Flows.create
+  },
+  {
+    path: "/flows/:id",
+    method: "delete",
+    action: Flows.destroy
   }
 ];
