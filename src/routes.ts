@@ -10,6 +10,11 @@ export const AppRoutes = [
   {
     path: "/flows",
     method: "get",
-    action: Flows.getAll
+    action: Flows.list
+  },
+  {
+    path: "/flows",
+    method: "post",
+    action: Flows.create
   }
 ];
