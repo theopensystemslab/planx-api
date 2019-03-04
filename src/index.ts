@@ -1,24 +1,32 @@
 require("dotenv").config();
 
+import * as express from "express";
+import { Request, Response } from "express";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { User } from "./entity/User";
+import { AppRoutes } from "./routes";
+import bodyParser = require("body-parser");
 
 createConnection()
-  .then(async connection => {
-    console.log("Inserting a new user into the database...");
-    // const user = new User();
-    // user.username = "john";
-    // user.passwordHash = "john";
-    // await connection.manager.save(user);
-    // console.log("Saved a new user with id: " + user.id);
+  .then(async () => {
+    const app = express();
+    app.use(bodyParser.json());
 
-    console.log("Loading users from the database...");
-    const users = await connection.manager.find(User);
-    console.log("Loaded users: ", users);
-    // await connection.manager.find(Flow);
-    // await connection.manager.find(Team);
+    AppRoutes.forEach(route => {
+      app[route.method](
+        route.path,
+        (request: Request, response: Response, next: Function) => {
+          route
+            .action(request, response)
+            .then(() => next)
+            .catch(err => next(err));
+        }
+      );
+    });
 
-    console.log("Here you can setup and run express/koa/any other framework.");
+    const port = process.env.PORT || 3000;
+    app.listen(port);
+
+    console.log(`listening: http://127.0.0.1:${port}`);
   })
-  .catch(error => console.log(error));
+  .catch(error => console.error(error));
