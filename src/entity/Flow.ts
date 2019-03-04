@@ -1,4 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn
+} from "typeorm";
+import { Operation } from "./Operation";
 import { Team } from "./Team";
 
 @Entity()
@@ -11,4 +18,7 @@ export class Flow {
 
   @Column({ type: "jsonb" })
   data: object;
+
+  @OneToMany(type => Operation, operation => operation.flow)
+  operations: Operation[];
 }
