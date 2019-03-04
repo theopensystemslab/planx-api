@@ -1,7 +1,7 @@
-import * as Flows from "./controller/flows";
-import * as Home from "./controller/home";
-import * as Sessions from "./controller/sessions";
-import * as Users from "./controller/users";
+import * as Flows from "../controller/flows";
+import * as Home from "../controller/home";
+import * as Sessions from "../controller/sessions";
+import * as Users from "../controller/users";
 
 export const AppRoutes = [
   {
