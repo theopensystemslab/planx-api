@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { format } from "url";
 
-export async function homeAction(request: Request, response: Response) {
+export async function index(request: Request, response: Response) {
   const url = (path: string): string =>
     format({
       protocol: request.protocol,

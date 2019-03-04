@@ -1,11 +1,13 @@
 import * as Flows from "./controller/flows";
-import { homeAction } from "./controller/home";
+import * as Home from "./controller/home";
+import * as Sessions from "./controller/sessions";
+import * as Users from "./controller/users";
 
 export const AppRoutes = [
   {
     path: "/",
     method: "get",
-    action: homeAction
+    action: Home.index
   },
   {
     path: "/flows",
@@ -21,5 +23,15 @@ export const AppRoutes = [
     path: "/flows/:id",
     method: "delete",
     action: Flows.destroy
+  },
+  {
+    path: "/users",
+    method: "post",
+    action: Users.create
+  },
+  {
+    path: "/login",
+    method: "post",
+    action: Sessions.create
   }
 ];
