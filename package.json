@@ -21,6 +21,7 @@
     "typescript": "2.5.2"
   },
   "dependencies": {
+    "aws-sdk": "^2.414.0",
     "bcryptjs": "^2.4.3",
     "class-validator": "^0.9.1",
     "cors": "^2.8.5",
@@ -30,6 +31,9 @@
     "jsonwebtoken": "^8.5.0",
     "pg": "^7.3.0",
     "reflect-metadata": "^0.1.10",
+    "sharedb": "^1.0.0-beta.20",
+    "sharedb-access": "^5.0.0",
+    "socket.io": "^2.2.0",
     "typeorm": "0.2.14",
     "url": "^0.11.0"
   },
