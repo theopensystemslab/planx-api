@@ -32,5 +32,8 @@
     "reflect-metadata": "^0.1.10",
     "typeorm": "0.2.14",
     "url": "^0.11.0"
+  },
+  "engines": {
+    "node": "10.x"
   }
 }
