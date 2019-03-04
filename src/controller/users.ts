@@ -15,6 +15,9 @@ export async function create(request: Request, response: Response) {
     response.send({ errors });
   } else {
     await userRepository.save(user);
+
+    // const userData = { id: u.id, username: u.username };
+
     response.send(user);
   }
 }

@@ -2,11 +2,10 @@ require("dotenv").config();
 
 import * as cors from "cors";
 import * as express from "express";
-import { Request, Response } from "express";
 import * as helmet from "helmet";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { AppRoutes } from "./routes";
+import routes from "./routes";
 import bodyParser = require("body-parser");
 
 createConnection()
@@ -16,17 +15,7 @@ createConnection()
     app.use(helmet());
     app.use(bodyParser.json());
 
-    AppRoutes.forEach(route => {
-      app[route.method](
-        route.path,
-        (request: Request, response: Response, next: Function) => {
-          route
-            .action(request, response)
-            .then(() => next)
-            .catch(err => next(err));
-        }
-      );
-    });
+    app.use("/", routes);
 
     const port = process.env.PORT || 3000;
     app.listen(port);

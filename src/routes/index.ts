@@ -1,37 +1,28 @@
+import { Router } from "express";
 import * as Flows from "../controller/flows";
 import * as Home from "../controller/home";
 import * as Sessions from "../controller/sessions";
 import * as Users from "../controller/users";
+import { checkJwt } from "../middlewares/checkJwt";
 
-export const AppRoutes = [
-  {
-    path: "/",
-    method: "get",
-    action: Home.index
-  },
-  {
-    path: "/flows",
-    method: "get",
-    action: Flows.list
-  },
-  {
-    path: "/flows",
-    method: "post",
-    action: Flows.create
-  },
-  {
-    path: "/flows/:id",
-    method: "delete",
-    action: Flows.destroy
-  },
-  {
-    path: "/users",
-    method: "post",
-    action: Users.create
-  },
-  {
-    path: "/login",
-    method: "post",
-    action: Sessions.create
-  }
-];
+const routes = Router();
+
+const homeRouter = Router();
+homeRouter.get("/", Home.index);
+routes.use("/", homeRouter);
+
+const sessionsRouter = Router();
+sessionsRouter.post("/login", Sessions.create);
+routes.use("/auth", sessionsRouter);
+
+const flowsRouter = Router();
+flowsRouter.get("/", [checkJwt], Flows.list);
+flowsRouter.post("/", [checkJwt], Flows.create);
+flowsRouter.get("/:id", [checkJwt], Flows.destroy);
+routes.use("/flows", flowsRouter);
+
+const usersRouter = Router();
+usersRouter.post("/", Users.create);
+routes.use("/users", usersRouter);
+
+export default routes;
