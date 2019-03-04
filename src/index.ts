@@ -1,19 +1,19 @@
 require("dotenv").config();
 
+import { json } from "body-parser";
 import * as cors from "cors";
 import * as express from "express";
 import * as helmet from "helmet";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import routes from "./routes";
-import bodyParser = require("body-parser");
 
 createConnection()
   .then(async () => {
     const app = express();
     app.use(cors());
     app.use(helmet());
-    app.use(bodyParser.json());
+    app.use(json());
 
     app.use("/", routes);
 
