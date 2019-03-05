@@ -1,12 +1,17 @@
 import axios from "axios";
 import * as React from "react";
 
+type Props = {
+  text: string;
+  url: string;
+};
+
 type State = {
   username: string;
   password: string;
 };
 
-class Login extends React.Component<{}, State> {
+class UserForm extends React.Component<Props, State> {
   readonly state: State = {
     username: "",
     password: ""
@@ -18,17 +23,13 @@ class Login extends React.Component<{}, State> {
 
   handleSubmit = async event => {
     event.preventDefault();
-    const req = await axios.post(
-      "http://localhost:3001/auth/login",
-      this.state
-    );
+    const req = await axios.post(this.props.url, this.state);
     console.log(req.data);
   };
 
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        Login
         <input
           placeholder="username"
           type="text"
@@ -41,10 +42,10 @@ class Login extends React.Component<{}, State> {
           value={this.state.password}
           onChange={this.updateField("password")}
         />
-        <button>Submit</button>
+        <button>{this.props.text}</button>
       </form>
     );
   }
 }
 
-export default Login;
+export default UserForm;
