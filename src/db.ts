@@ -1,8 +1,8 @@
 import { Pool } from "pg";
 import { DB } from "sharedb";
 
-function PostgresDB(options) {
-  // if (!(this instanceof PostgresDB)) return new PostgresDB(options);
+function PostgresDB(options): void {
+  if (!(this instanceof PostgresDB)) return new PostgresDB(options);
   DB.call(this, options);
   this.closed = false;
   this.pool = new Pool(options);
