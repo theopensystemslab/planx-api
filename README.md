@@ -1,7 +1,3 @@
-# Awesome Project Build with TypeORM
+# PlanX API
 
-Steps to run this project:
-
-1. Run `npm i` command
-2. Setup database settings inside `ormconfig.json` file
-3. Run `npm start` command
+[![CircleCI](https://circleci.com/gh/theopensystemslab/planx-api/tree/master.svg?style=svg&circle-token=474d22fe8ebb2b15b3efe0eab5a23d41875e3cf8)](https://circleci.com/gh/theopensystemslab/planx-api/tree/master)
