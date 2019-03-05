@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import Flow from "./Flow";
 
-@Entity()
+@Entity({ name: "teams" })
 export default class Team {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -12,6 +12,6 @@ export default class Team {
   @Column({ unique: true })
   slug: string;
 
-  @OneToMany(type => Flow, flow => flow.team)
+  @OneToMany(_type => Flow, flow => flow.team)
   flows: Flow[];
 }

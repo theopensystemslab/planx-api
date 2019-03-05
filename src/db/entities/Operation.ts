@@ -1,12 +1,19 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn
+} from "typeorm";
 import Flow from "./Flow";
 
-@Entity()
+@Entity({ name: "operations" })
 export default class Operation {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(type => Flow, flow => flow.operations)
+  @ManyToOne(_type => Flow, flow => flow.operations)
+  @JoinColumn({ name: "flow_id" })
   flow: Flow;
 
   @Column({ type: "integer", default: 0, nullable: false })

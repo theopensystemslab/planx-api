@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn
@@ -8,12 +9,13 @@ import {
 import Operation from "./Operation";
 import Team from "./Team";
 
-@Entity()
+@Entity({ name: "flows" })
 export default class Flow {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(type => Team, team => team.flows)
+  @ManyToOne(_type => Team, team => team.flows)
+  @JoinColumn({ name: "team_id" })
   team: Team;
 
   @Column({ type: "jsonb" })
