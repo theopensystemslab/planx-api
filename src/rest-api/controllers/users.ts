@@ -1,7 +1,7 @@
 import { validate } from "class-validator";
 import { Request, Response } from "express";
 import { getManager } from "typeorm";
-import { User } from "../entity/User";
+import User from "../../db/entities/User";
 
 export async function create(request: Request, response: Response) {
   const userRepository = getManager().getRepository(User);

@@ -2,7 +2,7 @@ import { compareSync } from "bcryptjs";
 import { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
 import { getManager } from "typeorm";
-import { User } from "../entity/User";
+import User from "../../db/entities/User";
 
 export async function create(request: Request, response: Response) {
   const userRepository = getManager().getRepository(User);

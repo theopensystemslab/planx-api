@@ -5,11 +5,11 @@ import {
   OneToMany,
   PrimaryGeneratedColumn
 } from "typeorm";
-import { Operation } from "./Operation";
-import { Team } from "./Team";
+import Operation from "./Operation";
+import Team from "./Team";
 
 @Entity()
-export class Flow {
+export default class Flow {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 

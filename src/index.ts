@@ -8,9 +8,9 @@ import "reflect-metadata";
 import * as ShareDB from "sharedb";
 import * as IO from "socket.io";
 import { createConnection } from "typeorm";
-import PostgresDB from "./db";
-import JsonStream from "./lib/json_stream";
-import routes from "./routes";
+import routes from "./rest-api/routes";
+import PostgresDB from "./websocket-api/db";
+import JsonStream from "./websocket-api/lib/json_stream";
 
 // sharedb/socket.io WebSockets API
 

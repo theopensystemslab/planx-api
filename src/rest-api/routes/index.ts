@@ -1,8 +1,8 @@
 import { Router } from "express";
-import * as Flows from "../controller/flows";
-import * as Home from "../controller/home";
-import * as Sessions from "../controller/sessions";
-import * as Users from "../controller/users";
+import * as Flows from "../controllers/flows";
+import * as Home from "../controllers/home";
+import * as Sessions from "../controllers/sessions";
+import * as Users from "../controllers/users";
 import { checkJwt } from "../middlewares/checkJwt";
 
 const routes = Router();

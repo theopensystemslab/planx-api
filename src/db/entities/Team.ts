@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Flow } from "./Flow";
+import Flow from "./Flow";
 
 @Entity()
-export class Team {
+export default class Team {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 

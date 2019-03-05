@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Flow } from "./Flow";
+import Flow from "./Flow";
 
 @Entity()
-export class Operation {
+export default class Operation {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
