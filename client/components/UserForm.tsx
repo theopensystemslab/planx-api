@@ -3,7 +3,7 @@ import * as React from "react";
 
 type Props = {
   text: string;
-  url: string;
+  endpoint: string;
 };
 
 type State = {
@@ -23,7 +23,9 @@ class UserForm extends React.Component<Props, State> {
 
   handleSubmit = async event => {
     event.preventDefault();
-    const req = await axios.post(this.props.url, this.state);
+    const { REST_API_PORT } = process.env;
+    const url = `http://localhost:${REST_API_PORT}/${this.props.endpoint}`;
+    const req = await axios.post(url, this.state);
     console.log(req.data);
   };
 
