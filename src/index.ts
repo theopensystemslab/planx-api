@@ -9,6 +9,7 @@ import * as ShareDB from "sharedb";
 import * as IO from "socket.io";
 import { createConnection } from "typeorm";
 import PostgresDB from "./db";
+import JsonStream from "./lib/json_stream";
 import routes from "./routes";
 
 // sharedb/socket.io WebSockets API
@@ -32,7 +33,14 @@ const io = IO(WS_PORT, {
 });
 
 io.on("connection", function(socket) {
-  console.log({ socket });
+  console.log(`new client connected: ${socket.client.id}`);
+
+  let stream = new JsonStream(socket, io);
+
+  socket.on("disconnect", function() {
+    console.log(`client disconnected: ${socket.client.id}`);
+    // console.log("user left", { userId });
+  });
 });
 
 console.log(`socket.io listening on: ws://127.0.0.1:${WS_PORT}`);
