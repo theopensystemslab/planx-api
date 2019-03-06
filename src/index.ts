@@ -4,6 +4,7 @@ import { json } from "body-parser";
 import * as cors from "cors";
 import * as express from "express";
 import * as helmet from "helmet";
+import { verify } from "jsonwebtoken";
 import "reflect-metadata";
 import * as ShareDB from "sharedb";
 import * as IO from "socket.io";
@@ -35,7 +36,55 @@ const io = IO(WS_PORT, {
 io.on("connection", function(socket) {
   console.log(`new client connected: ${socket.client.id}`);
 
+  let userId;
   let stream = new JsonStream(socket, io);
+
+  socket.on("authenticate", function({ token }) {
+    verify(token, process.env.JWT_SECRET, function(err, decoded) {
+      if (err) {
+        console.error(err);
+        socket.emit("logout");
+      } else {
+        try {
+          userId = decoded.id;
+          sharedb.listen(stream, { userId });
+          // console.log("authorized user connected", { userId });
+        } catch (err) {
+          console.error(err);
+          socket.emit("logout");
+        }
+      }
+    });
+  });
+
+  setTimeout(function() {
+    if (!userId) {
+      console.log(
+        `booting ${socket.client.id} because they've not authenticated in time`
+      );
+      socket.disconnect(true);
+    }
+  }, 1000);
+
+  // socket.on("signS3Upload", (params, callback) => {
+  //   signS3Upload(params.filename, params.filetype, data => {
+  //     callback(data);
+  //   });
+  // });
+
+  socket.on("join", (params, callback) => {
+    socket.join(params.room);
+    // stream.setRoom(params.room);
+    console.log(userId + " joined room " + params.room);
+    callback();
+  });
+
+  socket.on("leave", (params, callback) => {
+    socket.leave(params.room);
+    // stream.setRoom(null);
+    console.log(userId + " left room " + params.room);
+    callback();
+  });
 
   socket.on("disconnect", function() {
     console.log(`client disconnected: ${socket.client.id}`);

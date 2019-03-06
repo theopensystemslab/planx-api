@@ -1,39 +1,49 @@
 import { Duplex } from "stream";
+import * as util from "util";
 
-class JsonStream extends Duplex {
-  public room;
+function SocketIOJSONStream(ws, io) {
+  Duplex.call(this, { objectMode: true });
+  this.ws = ws;
+  this.io = io;
+  const self = this;
 
-  constructor(private ws, io) {
-    super(ws);
-    this._write = this._write.bind(this);
+  ws.on("sharedb", function(data) {
+    console.log("received");
+    self.push(JSON.parse(data));
+  });
 
-    Duplex.call(this, { objectMode: true });
+  ws.on("disconnect", function() {
+    self.push(null);
+    self.end();
 
-    ws.on("disconnect", () => {
-      this.push(null);
-      this.end();
+    self.emit("close");
+    self.emit("end");
+  });
 
-      this.emit("close");
-      this.emit("end");
-    });
+  this.on("error", function() {
+    ws.disconnect(true);
+  });
 
-    this.on("error", () => {
-      ws.disconnect(true);
-    });
-
-    this.on("end", () => {
-      ws.disconnect(true);
-    });
-  }
-
-  _read() {}
-
-  _write(msg, _encoding, next): void {
-    this.ws.emit("sharedb", JSON.stringify(msg));
-    next();
-  }
+  this.on("end", function() {
+    ws.disconnect(true);
+  });
 }
+util.inherits(SocketIOJSONStream, Duplex);
 
-export default JsonStream;
+SocketIOJSONStream.prototype.setRoom = function(room) {
+  console.log("set room", room);
+  this.room = room;
+};
 
-// util.inherits(JsonStream, Duplex)
+SocketIOJSONStream.prototype._read = function() {};
+SocketIOJSONStream.prototype._write = function(msg, encoding, next) {
+  this.ws.emit("sharedb", JSON.stringify(msg));
+  // if (msg && msg.a === "init") {
+  //   this.ws.emit("sharedb", JSON.stringify(msg));
+  // } else {
+  //   this.ws.broadcast.to(this.room).emit("sharedb", JSON.stringify(msg));
+  // }
+  next();
+};
+
+export default SocketIOJSONStream;

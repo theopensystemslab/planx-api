@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn
 } from "typeorm";
 import Flow from "./Flow";
+import User from "./User";
 
 @Entity({ name: "operations" })
 export default class Operation {
@@ -21,4 +22,8 @@ export default class Operation {
 
   @Column({ type: "jsonb", nullable: false })
   data;
+
+  @ManyToOne(_type => User, user => user.operations)
+  @JoinColumn({ name: "actor_id" })
+  actor: User;
 }

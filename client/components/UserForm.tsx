@@ -1,9 +1,8 @@
-import axios from "axios";
 import * as React from "react";
 
 type Props = {
   text: string;
-  endpoint: string;
+  fn;
 };
 
 type State = {
@@ -23,10 +22,8 @@ class UserForm extends React.Component<Props, State> {
 
   handleSubmit = async event => {
     event.preventDefault();
-    const { REST_API_PORT } = process.env;
-    const url = `http://localhost:${REST_API_PORT}/${this.props.endpoint}`;
-    const req = await axios.post(url, this.state);
-    console.log(req.data);
+    const { username, password } = this.state;
+    this.props.fn(username, password);
   };
 
   render() {

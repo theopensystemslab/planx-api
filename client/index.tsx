@@ -1,24 +1,35 @@
 require("dotenv").config({ path: "../.env" });
 
+import { Observer } from "mobx-react-lite";
 import * as React from "react";
 import { render } from "react-dom";
-import * as ShareDB from "sharedb/lib/client";
+import "setimmediate";
 import UserForm from "./components/UserForm";
-import SocketAdapter from "./lib/socket_adapter";
+import Auth from "./models/auth";
 
-const socketUrl = `ws://localhost:${process.env.SOCKET_API_PORT}`;
-const socket = new SocketAdapter(socketUrl);
-const connection = new ShareDB.Connection(socket);
+function ObserveAuth(props) {
+  const auth = Auth.create({});
+  return (
+    <Observer>
+      {() => {
+        if (auth.loggedIn) {
+          return (
+            <div>
+              <h1>{auth.username}</h1>
+              <button onClick={auth.logout}>Log out</button>
+            </div>
+          );
+        } else {
+          return (
+            <div>
+              <UserForm text="Log in" fn={auth.login} />
+              <UserForm text="Sign up" fn={auth.signup} />
+            </div>
+          );
+        }
+      }}
+    </Observer>
+  );
+}
 
-const doc = connection.get("flows", 123);
-console.log({ doc });
-
-const App = () => (
-  <div>
-    <p>working log in and sign up forms, (watch your console)</p>
-    <UserForm text="Log in" endpoint="auth/login" />
-    <UserForm text="Sign up" endpoint="users" />
-  </div>
-);
-
-render(<App />, document.getElementById("client"));
+render(<ObserveAuth />, document.getElementById("client"));

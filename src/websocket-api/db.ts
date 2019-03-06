@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import { Pool, Query } from "pg";
 import { DB } from "sharedb";
 
 function PostgresDB(options): void {
@@ -15,6 +15,17 @@ PostgresDB.prototype.close = function(callback) {
   this.pool.end();
   if (callback) callback();
 };
+
+const submit = Query.prototype.submit;
+// Query.prototype.submit = function() {
+//   const text = this.text;
+//   const values = this.values;
+//   const query = values.reduce((q, v, i) => q.replace(`$${i + 1}`, v), text);
+//   console.log(query);
+//   submit.apply(this, arguments);
+// };
+
+// ----------
 
 function rollback(client, done) {
   client.query("ROLLBACK", function(err) {

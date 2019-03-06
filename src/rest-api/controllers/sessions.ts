@@ -23,7 +23,9 @@ export async function create(request: Request, response: Response) {
         username: user.username
       };
 
-      const token = sign(userData, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const token = sign(userData, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN
+      });
 
       response.send({
         ...userData,

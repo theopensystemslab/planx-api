@@ -1,10 +1,5 @@
 import * as SocketIOClient from "socket.io-client";
-
-function log(...messages: any): void {
-  if (process.env.DEBUG) {
-    console.log(messages);
-  }
-}
+import { log } from "../lib/utils";
 
 enum STATE {
   CONNECTING,
@@ -16,7 +11,7 @@ class SocketAdapter {
   private socket: SocketIOClient.Socket;
   readyState: STATE;
 
-  constructor(public url: string, auth?) {
+  constructor(public url: string, auth: any) {
     this.readyState = STATE.CONNECTING;
     this.socket = SocketIOClient.connect(url);
     log("connecting");
@@ -24,6 +19,8 @@ class SocketAdapter {
     this.socket.on("connect", () => {
       this.readyState = STATE.OPEN;
       log("connected");
+      this.socket.emit("authenticate", { token: auth.jwt });
+      this.onopen({ name: "open" });
     });
 
     this.socket.on("reconnect", () => {
@@ -41,6 +38,17 @@ class SocketAdapter {
       log("logout");
     });
 
+    this.socket.on("sharedb", data => {
+      const event = { data };
+      this.onmessage(event);
+      log("sharedb received", data);
+    });
+
+    this.socket.on("error", err => {
+      this.onerror({ name: "error", err });
+      log("error", err);
+    });
+
     this.socket.on("disconnect", reason => {
       this.readyState = STATE.CLOSED;
       if (reason === "transport closed") {
@@ -52,6 +60,14 @@ class SocketAdapter {
       }
     });
   }
+
+  // signS3Upload(filename, filetype) {
+  //   return new Promise((resolve, reject) => {
+  //     this.socket.emit("signS3Upload", { filename, filetype }, response => {
+  //       resolve(response)
+  //     })
+  //   })
+  // }
 
   join(room, cb) {
     this.socket.emit("join", { room }, cb);

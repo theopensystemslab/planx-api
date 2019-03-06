@@ -24,8 +24,6 @@ function getToken(req: Request): string | null {
 export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
   const token = getToken(req);
 
-  console.log({ token });
-
   let jwtPayload;
 
   try {
@@ -37,11 +35,11 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  // The token is valid for 1 hour
+  // The token is valid for JWT_EXPIRES_IN
   // We want to send a new token on every request
   const { id, username } = jwtPayload;
   const newToken = jwt.sign({ id, username }, process.env.JWT_SECRET, {
-    expiresIn: "1h"
+    expiresIn: process.env.JWT_EXPIRES_IN
   });
   res.setHeader("token", newToken);
 

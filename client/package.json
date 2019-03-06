@@ -8,8 +8,10 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3",
+    "mobx-react-lite": "^1.1.0",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "setimmediate": "^1.0.5",
     "socket.io-client": "^2.2.0"
   },
   "devDependencies": {

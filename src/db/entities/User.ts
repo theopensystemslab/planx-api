@@ -5,8 +5,10 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn
 } from "typeorm";
+import Operation from "./Operation";
 
 @Entity({ name: "users" })
 export default class User {
@@ -31,6 +33,9 @@ export default class User {
   private encryptPassword(): void {
     this.password = hashSync(this.password, 10);
   }
+
+  @OneToMany(type => Operation, operation => operation.actor)
+  operations: Operation[];
 
   // @BeforeUpdate()
   // private updatePasswordIfNecessary(): void {
