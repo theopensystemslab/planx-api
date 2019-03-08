@@ -1,5 +1,5 @@
 export function log(...messages: any): void {
-  if (process.env.DEBUG) {
+  if (JSON.parse(process.env.DEBUG)) {
     console.log(messages)
   }
 }

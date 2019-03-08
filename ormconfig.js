@@ -1,4 +1,4 @@
-const DEBUG = process.env.NODE_ENV !== 'production'
+const DEBUG = JSON.parse(process.env.DEBUG)
 
 module.exports = {
   type: 'postgres',
