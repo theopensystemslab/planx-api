@@ -6,8 +6,8 @@ module.exports = {
   synchronize: DEBUG,
   logging: DEBUG,
   entities: ['dist/db/entities/**/*.js'],
-  migrations: ['src/db/migrations/**/*.ts'],
-  subscribers: ['src/db/subscribers/**/*.ts'],
+  migrations: ['dist/db/migrations/**/*.js'],
+  subscribers: ['dist/db/subscribers/**/*.js'],
   cli: {
     entitiesDir: 'src/db/entities',
     migrationsDir: 'src/db/migrations',
