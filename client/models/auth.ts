@@ -3,7 +3,7 @@ import { flow, onSnapshot, types } from 'mobx-state-tree'
 import * as ShareDB from 'sharedb/lib/client'
 import SocketAdapter from '../lib/socket_adapter'
 
-const socketUrl = `ws://localhost:${process.env.SOCKET_API_PORT}`
+const socketUrl = `${process.env.HOST}:${process.env.PORT}`
 
 const Auth = types
   .model('Auth', {
@@ -46,7 +46,7 @@ const Auth = types
       // const req = await axios.post(url, this.state);
       // console.log(req.data);
       const response = yield axios.post(
-        `http://localhost:${process.env.REST_API_PORT}/auth/login`,
+        `${process.env.HOST}:${process.env.PORT}/auth/login`,
         {
           username,
           password,
@@ -60,7 +60,7 @@ const Auth = types
 
     const signup = flow(function*(username, password) {
       const response = yield axios.post(
-        `http://localhost:${process.env.REST_API_PORT}/users`,
+        `${process.env.HOST}:${process.env.PORT}/users`,
         {
           username,
           password,

@@ -4,6 +4,7 @@ import { json } from 'body-parser'
 import * as cors from 'cors'
 import * as express from 'express'
 import * as helmet from 'helmet'
+import { Server } from 'http'
 import { verify } from 'jsonwebtoken'
 import 'reflect-metadata'
 import * as ShareDB from 'sharedb'
@@ -12,6 +13,15 @@ import { createConnection } from 'typeorm'
 import routes from './rest-api/routes'
 import PostgresDB from './websocket-api/db'
 import JsonStream from './websocket-api/lib/json_stream'
+
+const app = express()
+app.use(cors())
+app.use(helmet())
+app.use(json())
+app.use('/', routes)
+
+const server = new Server(app)
+const io = IO(server)
 
 // sharedb/socket.io WebSockets API
 
@@ -24,13 +34,6 @@ const sharedb = ShareDB({
   db,
   disableDocAction: true,
   disableSpaceDelimitedActions: true,
-})
-
-console.log('set up sharedb')
-
-const WS_PORT = process.env.SOCKET_API_PORT || 5000
-const io = IO(WS_PORT, {
-  serveClient: false,
 })
 
 io.on('connection', socket => {
@@ -92,22 +95,13 @@ io.on('connection', socket => {
   })
 })
 
-console.log(`socket.io listening on: ws://127.0.0.1:${WS_PORT}`)
-
 // typeorm/express REST API
 
 createConnection()
   .then(async () => {
-    const app = express()
-    app.use(cors())
-    app.use(helmet())
-    app.use(json())
+    const { PORT, HOST } = process.env
+    server.listen(PORT)
 
-    app.use('/', routes)
-
-    const PORT = process.env.REST_API_PORT || 5001
-    app.listen(PORT)
-
-    console.log(`express listening on: http://127.0.0.1:${PORT}`)
+    console.log(`express and socket.io listening on: ${HOST}:${PORT}`)
   })
   .catch(error => console.error(error))
