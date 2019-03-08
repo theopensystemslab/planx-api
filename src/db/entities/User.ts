@@ -1,41 +1,41 @@
-import { hashSync } from "bcryptjs";
-import { Length } from "class-validator";
+import { hashSync } from 'bcryptjs'
+import { Length } from 'class-validator'
 import {
   AfterLoad,
   BeforeInsert,
   Column,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn
-} from "typeorm";
-import Operation from "./Operation";
+  PrimaryGeneratedColumn,
+} from 'typeorm'
+import Operation from './Operation'
 
-@Entity({ name: "users" })
+@Entity({ name: 'users' })
 export default class User {
-  @PrimaryGeneratedColumn("uuid")
-  public id: string;
+  @PrimaryGeneratedColumn('uuid')
+  public id: string
 
-  @Column({ unique: true, type: "text", nullable: false })
-  public username: string;
+  @Column({ unique: true, type: 'text', nullable: false })
+  public username: string
 
-  @Column({ type: "text", nullable: false })
+  @Column({ type: 'text', nullable: false })
   @Length(6)
-  public password: string;
+  public password: string
 
-  private tempPassword: string;
+  private tempPassword: string
 
   @AfterLoad()
   private loadTempPassword(): void {
-    this.tempPassword = this.password;
+    this.tempPassword = this.password
   }
 
   @BeforeInsert()
   private encryptPassword(): void {
-    this.password = hashSync(this.password, 10);
+    this.password = hashSync(this.password, 10)
   }
 
   @OneToMany(type => Operation, operation => operation.actor)
-  operations: Operation[];
+  operations: Operation[]
 
   // @BeforeUpdate()
   // private updatePasswordIfNecessary(): void {

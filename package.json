@@ -12,7 +12,14 @@
     "client": "cd client && yarn start",
     "start": "concurrently 'yarn server' 'yarn client'",
     "build": "rimraf dist && tsc",
-    "test": "jest"
+    "postinstall": "yarn run build",
+    "test": "jest",
+    "serve": "node dist/index.js",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
+    "lint": "tslint --project .",
+    "lint:fix": "tslint --fix --project .",
+    "prettify": "prettier --write './{src,client}/**/*.{ts,tsx,html,js,jsx,json}'"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -22,11 +29,17 @@
     "@types/jest": "^24.0.9",
     "@types/node": "^8.0.29",
     "concurrently": "^4.1.0",
+    "husky": "^1.3.1",
     "jest": "^24.1.0",
     "jest-dom": "^3.1.2",
+    "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.0",
     "ts-node-dev": "^1.0.0-pre.32",
+    "tslint": "^5.13.1",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^3.6.0",
     "typescript": "^3.3.3333"
   },
   "dependencies": {
