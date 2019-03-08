@@ -2,7 +2,7 @@ const DEBUG = true //process.env.NODE_ENV === "development"
 
 module.exports = {
   type: 'postgres',
-  url: process.env.DB_URI,
+  url: process.env.DATABASE_URL,
   synchronize: DEBUG,
   logging: DEBUG,
   entities: ['dist/db/entities/**/*.js'],

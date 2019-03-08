@@ -16,7 +16,7 @@ import JsonStream from './websocket-api/lib/json_stream'
 // sharedb/socket.io WebSockets API
 
 const db = new PostgresDB({
-  connectionString: process.env.DB_URI,
+  connectionString: process.env.DATABASE_URL,
   ssl: JSON.parse(process.env.DB_SSL),
 })
 
