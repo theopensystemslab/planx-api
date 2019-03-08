@@ -20,7 +20,7 @@
     "lint": "tslint --project .",
     "lint:fix": "tslint --fix --project .",
     "prettify": "prettier --write './{src,client}/**/*.{ts,tsx,html,js,jsx,json}'",
-    "typeorm_using_ts": "ts-node ./node_modules/typeorm/cli.js",
+    "typeorm_using_ts": "./node_modules/.bin/ts-node ./node_modules/typeorm/cli.js",
     "db:migrate": "yarn typeorm_using_ts migration:run",
     "db:rollback": "yarn typeorm_using_ts migration:revert"
   },
