@@ -1,4 +1,4 @@
-const DEBUG = true //process.env.NODE_ENV === "development"
+const DEBUG = process.env.NODE_ENV !== 'production'
 
 module.exports = {
   type: 'postgres',

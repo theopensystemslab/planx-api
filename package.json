@@ -19,7 +19,8 @@
     "type-check:watch": "tsc --noEmit --watch",
     "lint": "tslint --project .",
     "lint:fix": "tslint --fix --project .",
-    "prettify": "prettier --write './{src,client}/**/*.{ts,tsx,html,js,jsx,json}'"
+    "prettify": "prettier --write './{src,client}/**/*.{ts,tsx,html,js,jsx,json}'",
+    "db:migrate": "typeorm migration:run"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
