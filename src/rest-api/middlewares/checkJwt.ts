@@ -13,7 +13,8 @@ function getToken(req: Request): string | null {
   if (req.query && req.query.token) {
     // Handle token presented as URI param
     return req.query.token
-  } else if (req.cookies && req.cookies.token) {
+  }
+  if (req.cookies && req.cookies.token) {
     // Handle token presented as a cookie parameter
     return req.cookies.token
   }

@@ -5,26 +5,25 @@ function SocketIOJSONStream(ws, io) {
   Duplex.call(this, { objectMode: true })
   this.ws = ws
   this.io = io
-  const self = this
 
-  ws.on('sharedb', function(data) {
+  ws.on('sharedb', data => {
     console.log('received')
-    self.push(JSON.parse(data))
+    this.push(JSON.parse(data))
   })
 
-  ws.on('disconnect', function() {
-    self.push(null)
-    self.end()
+  ws.on('disconnect', () => {
+    this.push(null)
+    this.end()
 
-    self.emit('close')
-    self.emit('end')
+    this.emit('close')
+    this.emit('end')
   })
 
-  this.on('error', function() {
+  this.on('error', () => {
     ws.disconnect(true)
   })
 
-  this.on('end', function() {
+  this.on('end', () => {
     ws.disconnect(true)
   })
 }

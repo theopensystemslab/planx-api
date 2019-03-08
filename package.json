@@ -20,7 +20,9 @@
     "lint": "tslint --project .",
     "lint:fix": "tslint --fix --project .",
     "prettify": "prettier --write './{src,client}/**/*.{ts,tsx,html,js,jsx,json}'",
-    "db:migrate": "typeorm migration:run"
+    "typeorm_using_ts": "ts-node ./node_modules/typeorm/cli.js",
+    "db:migrate": "yarn typeorm_using_ts migration:run",
+    "db:rollback": "yarn typeorm_using_ts migration:revert"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -64,6 +66,11 @@
     "stream": "^0.0.2",
     "typeorm": "0.2.14",
     "url": "^0.11.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn prettify && yarn lint && yarn test"
+    }
   },
   "jest": {
     "moduleFileExtensions": [
