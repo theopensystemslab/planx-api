@@ -8,7 +8,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "mobx": "4",
     "mobx-react-lite": "^1.1.0",
+    "mobx-state-tree": "^3.11.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "setimmediate": "^1.0.5",
