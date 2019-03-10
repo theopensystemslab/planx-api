@@ -1,7 +1,8 @@
-import { config, S3 } from 'aws-sdk'
+import * as aws from 'aws-sdk'
 import { v4 as uuid } from 'uuid'
 
-config.update({
+aws.config.update({
+  region: process.env.AWS_S3_REGION,
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_KEY,
 })
@@ -11,14 +12,17 @@ export const signS3Upload = (
   filetype: string,
   callback: Function
 ) => {
-  const s3 = new S3()
+  const s3 = new aws.S3({
+    apiVersion: '2006-03-01',
+    params: { Bucket: process.env.AWS_S3_BUCKET },
+  })
 
   const params = {
     Bucket: process.env.AWS_S3_BUCKET,
     ACL: process.env.AWS_S3_ACL,
     Key: `uploads/${uuid()}_${filename}`,
     ContentType: filetype,
-    Expires: 60,
+    // Expires: 60,
   }
 
   // return new Promise((resolve, reject) => {
@@ -28,7 +32,7 @@ export const signS3Upload = (
       return callback(err)
     }
 
-    return callback(data)
+    return callback(data.split('?')[0])
   })
   // });
 }
