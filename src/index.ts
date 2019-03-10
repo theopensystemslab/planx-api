@@ -10,6 +10,7 @@ import 'reflect-metadata'
 import * as ShareDB from 'sharedb'
 import * as IO from 'socket.io'
 import { createConnection } from 'typeorm'
+import { signS3Upload } from './lib/s3'
 import routes from './rest-api/routes'
 import PostgresDB from './websocket-api/db'
 import JsonStream from './websocket-api/lib/json_stream'
@@ -69,11 +70,11 @@ io.on('connection', socket => {
     }
   }, 1000)
 
-  // socket.on("signS3Upload", (params, callback) => {
-  //   signS3Upload(params.filename, params.filetype, data => {
-  //     callback(data);
-  //   });
-  // });
+  socket.on('signS3Upload', (params, callback) => {
+    signS3Upload(params.filename, params.filetype, data => {
+      callback(data)
+    })
+  })
 
   socket.on('join', (params, callback) => {
     socket.join(params.room)
