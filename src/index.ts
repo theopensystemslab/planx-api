@@ -59,6 +59,19 @@ io.on('connection', socket => {
   const stream = new JsonStream(socket, io)
 
   socket.on('authenticate', ({ token }) => {
+    console.log(`authenticating ${socket.client.id}`)
+
+    setTimeout(() => {
+      if (!userId) {
+        console.log(
+          `booting ${
+            socket.client.id
+          } because they've not authenticated in time`
+        )
+        socket.disconnect(true)
+      }
+    }, 1000)
+
     verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
         console.error(err)
@@ -67,7 +80,10 @@ io.on('connection', socket => {
         try {
           userId = decoded.id
           sharedb.listen(stream, { userId })
-          // console.log("authorized user connected", { userId });
+          console.log('authorized user connected', {
+            userId,
+            client: socket.client.id,
+          })
         } catch (err) {
           console.error(err)
           socket.emit('logout')
@@ -75,15 +91,6 @@ io.on('connection', socket => {
       }
     })
   })
-
-  setTimeout(() => {
-    if (!userId) {
-      console.log(
-        `booting ${socket.client.id} because they've not authenticated in time`
-      )
-      socket.disconnect(true)
-    }
-  }, 1000)
 
   socket.on('signS3Upload', (params, callback) => {
     signS3Upload(params.filename, params.filetype, data => {
