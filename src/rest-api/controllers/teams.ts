@@ -1,10 +1,14 @@
 import { validate } from 'class-validator'
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { snakeCase } from 'lodash'
 import { getManager } from 'typeorm'
 import Team from '../../db/entities/Team'
 
-export async function create(request: Request, response: Response) {
+export async function create(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
   const repository = getManager().getRepository(Team)
 
   const team = new Team()
@@ -12,13 +16,15 @@ export async function create(request: Request, response: Response) {
   team.slug = snakeCase(team.name)
 
   const errors = await validate(team)
-
-  if (errors.length > 0) {
-    response.status(422)
-    response.send({ errors })
-  } else {
-    const created = await repository.save(team)
-    response.send(created)
+  try {
+    if (errors.length > 0) {
+      next({ status: 422, message: errors.map(e => e.constraints) })
+    } else {
+      const created = await repository.save(team)
+      response.send(created)
+    }
+  } catch (e) {
+    next(e)
   }
 }
 

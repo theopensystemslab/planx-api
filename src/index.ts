@@ -1,16 +1,22 @@
 require('dotenv').config()
 
-import { json } from 'body-parser'
+import { json, urlencoded } from 'body-parser'
 import * as cors from 'cors'
 import * as express from 'express'
 import * as helmet from 'helmet'
 import { Server } from 'http'
 import { verify } from 'jsonwebtoken'
+import * as methodOverride from 'method-override'
 import 'reflect-metadata'
 import * as ShareDB from 'sharedb'
 import * as IO from 'socket.io'
 import { createConnection } from 'typeorm'
 import { signS3Upload } from './lib/s3'
+import {
+  clientErrorHandler,
+  errorHandler,
+  logErrors,
+} from './rest-api/middlewares/error_handlers'
 import routes from './rest-api/routes'
 import PostgresDB from './websocket-api/db'
 import JsonStream from './websocket-api/lib/json_stream'
@@ -18,8 +24,17 @@ import JsonStream from './websocket-api/lib/json_stream'
 const app = express()
 app.use(cors())
 app.use(helmet())
+app.use(
+  urlencoded({
+    extended: true,
+  })
+)
 app.use(json())
 app.use('/v1/', routes)
+app.use(methodOverride())
+app.use(logErrors)
+app.use(clientErrorHandler)
+app.use(errorHandler)
 
 const server = new Server(app)
 const io = IO(server)
