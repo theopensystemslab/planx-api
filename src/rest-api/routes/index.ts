@@ -27,6 +27,7 @@ usersRouter.post('/', Users.create)
 routes.use('/users', usersRouter)
 
 const teamsRouter = Router()
+teamsRouter.get('/', Teams.list)
 teamsRouter.post('/', Teams.create)
 routes.use('/teams', teamsRouter)
 

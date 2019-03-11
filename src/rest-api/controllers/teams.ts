@@ -21,3 +21,9 @@ export async function create(request: Request, response: Response) {
     response.send(created)
   }
 }
+
+export async function list(_request: Request, response: Response) {
+  const respository = getManager().getRepository(Team)
+  const teams = await respository.find()
+  response.send(teams)
+}

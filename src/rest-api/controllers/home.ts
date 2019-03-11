@@ -6,8 +6,8 @@ export async function index(request: Request, response: Response) {
     format({
       protocol: request.protocol,
       host: request.get('host'),
-      pathname: path,
+      pathname: `v1/${path}`,
     })
 
-  response.send({ flows: url('flows') })
+  response.send({ flows: url('flows'), teams: url('teams') })
 }
