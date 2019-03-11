@@ -12,15 +12,20 @@ export async function create(request: Request, response: Response) {
     return response.send({ error: 'missing username and/or password' })
   }
 
-  const user = await userRepository.findOne({
-    username: request.body.username,
-  })
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where({
+      username: request.body.username,
+    })
+    .leftJoinAndSelect('user.team', 'team')
+    .getOne()
 
   if (user) {
     if (compareSync(request.body.password, user.password)) {
       const userData = {
         id: user.id,
         username: user.username,
+        team: user.team,
       }
 
       const token = sign(userData, process.env.JWT_SECRET, {
