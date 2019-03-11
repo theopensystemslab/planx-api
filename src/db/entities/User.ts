@@ -41,6 +41,9 @@ export default class User {
   @OneToMany(type => Operation, operation => operation.actor)
   operations: Operation[]
 
+  @OneToMany(type => Team, team => team.creator)
+  createdTeams: Team[]
+
   @ManyToOne(_type => Team, team => team.members)
   @JoinColumn({ name: 'team_id' })
   team: Team

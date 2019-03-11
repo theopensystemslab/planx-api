@@ -1,10 +1,10 @@
 import { Router } from 'express'
+import * as jwt from 'express-jwt'
 import * as Flows from '../controllers/flows'
 import * as Home from '../controllers/home'
 import * as Sessions from '../controllers/sessions'
 import * as Teams from '../controllers/teams'
 import * as Users from '../controllers/users'
-import { checkJwt } from '../middlewares/checkJwt'
 
 const routes = Router()
 
@@ -20,7 +20,7 @@ const flowsRouter = Router()
 flowsRouter.get('/', Flows.list)
 flowsRouter.post('/', Flows.create)
 flowsRouter.delete('/:id', Flows.destroy)
-routes.use('/flows', [checkJwt], flowsRouter)
+routes.use('/flows', jwt({ secret: process.env.JWT_SECRET }), flowsRouter)
 
 const usersRouter = Router()
 usersRouter.post('/', Users.create)
@@ -29,7 +29,7 @@ routes.use('/users', usersRouter)
 const teamsRouter = Router()
 teamsRouter.get('/', Teams.list)
 teamsRouter.post('/', Teams.create)
-routes.use('/teams', [checkJwt], teamsRouter)
+routes.use('/teams', jwt({ secret: process.env.JWT_SECRET }), teamsRouter)
 
 const errorRouter = Router()
 routes.use(

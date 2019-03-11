@@ -1,5 +1,12 @@
 import { Length } from 'class-validator'
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 import Flow from './Flow'
 import User from './User'
 
@@ -20,4 +27,8 @@ export default class Team {
 
   @OneToMany(type => User, user => user.team)
   members: User[]
+
+  @ManyToOne(_type => User, user => user.createdTeams)
+  @JoinColumn({ name: 'creator_id' })
+  creator: User
 }
