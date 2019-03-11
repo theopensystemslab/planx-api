@@ -12,7 +12,6 @@
     "client": "cd client && yarn start",
     "start": "concurrently 'yarn server' 'yarn client'",
     "build": "rimraf dist && tsc",
-    "postinstall": "yarn run build",
     "test": "jest",
     "serve": "node dist/index.js",
     "type-check": "tsc --noEmit",
