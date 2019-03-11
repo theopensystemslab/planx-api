@@ -30,6 +30,14 @@ app.use(
   })
 )
 app.use(json())
+
+app.use(
+  '/',
+  express.Router().get('/', (req, res) => {
+    res.redirect('/v1')
+  })
+)
+
 app.use('/v1/', routes)
 app.use(methodOverride())
 app.use(logErrors)
