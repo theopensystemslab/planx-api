@@ -5,10 +5,13 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import Operation from './Operation'
+import Team from './Team'
 
 @Entity({ name: 'users' })
 export default class User {
@@ -36,6 +39,10 @@ export default class User {
 
   @OneToMany(type => Operation, operation => operation.actor)
   operations: Operation[]
+
+  @ManyToOne(_type => Team, team => team.members)
+  @JoinColumn({ name: 'team_id' })
+  team: Team
 
   // @BeforeUpdate()
   // private updatePasswordIfNecessary(): void {

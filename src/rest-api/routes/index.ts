@@ -2,6 +2,7 @@ import { Router } from 'express'
 import * as Flows from '../controllers/flows'
 import * as Home from '../controllers/home'
 import * as Sessions from '../controllers/sessions'
+import * as Teams from '../controllers/teams'
 import * as Users from '../controllers/users'
 import { checkJwt } from '../middlewares/checkJwt'
 
@@ -24,5 +25,9 @@ routes.use('/flows', flowsRouter)
 const usersRouter = Router()
 usersRouter.post('/', Users.create)
 routes.use('/users', usersRouter)
+
+const teamsRouter = Router()
+teamsRouter.post('/', Teams.create)
+routes.use('/teams', teamsRouter)
 
 export default routes

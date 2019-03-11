@@ -53,6 +53,7 @@
     "express": "^4.16.4",
     "helmet": "^3.16.0",
     "jsonwebtoken": "^8.5.0",
+    "lodash": "^4.17.11",
     "pg": "^7.3.0",
     "recompose": "^0.30.0",
     "reflect-metadata": "^0.1.10",

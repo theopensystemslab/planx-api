@@ -1,5 +1,7 @@
+import { Length } from 'class-validator'
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import Flow from './Flow'
+import User from './User'
 
 @Entity({ name: 'teams' })
 export default class Team {
@@ -7,6 +9,7 @@ export default class Team {
   id: string
 
   @Column()
+  @Length(3)
   name: string
 
   @Column({ unique: true })
@@ -14,4 +17,7 @@ export default class Team {
 
   @OneToMany(_type => Flow, flow => flow.team)
   flows: Flow[]
+
+  @OneToMany(type => User, user => user.team)
+  members: User[]
 }
