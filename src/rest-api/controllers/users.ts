@@ -17,10 +17,31 @@ export async function create(
     user.username = request.body.username
     user.password = request.body.password
 
+    if (await userRepository.findOne({ username: user.username })) {
+      next({
+        status: 422,
+        errors: [
+          {
+            resource: 'User',
+            field: 'username',
+            code: 'already_exists',
+          },
+        ],
+      })
+    }
+
     const errors = await validate(user)
 
     if (errors.length > 0) {
-      next({ errors, status: 422 })
+      next({
+        status: 422,
+        errors: errors.map(e => ({
+          resource: 'User',
+          field: e.property,
+          code: 'invalid',
+          reasons: e.constraints,
+        })),
+      })
     } else {
       const createdUser = await userRepository.save(user)
 

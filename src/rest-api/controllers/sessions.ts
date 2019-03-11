@@ -1,10 +1,14 @@
 import { compareSync } from 'bcryptjs'
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { sign } from 'jsonwebtoken'
 import { getManager } from 'typeorm'
 import User from '../../db/entities/User'
 
-export async function create(request: Request, response: Response) {
+export async function create(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
   const userRepository = getManager().getRepository(User)
 
   if (!request.body.username || !request.body.password) {
@@ -37,11 +41,17 @@ export async function create(request: Request, response: Response) {
         token,
       })
     } else {
-      response.status(401)
-      response.send({ error: 'incorrect password' })
+      next({
+        status: 401,
+        message: 'incorrect password',
+        errors: [{ resource: 'User', code: 'invalid' }],
+      })
     }
   } else {
-    response.status(404)
-    response.send({ error: 'user not found' })
+    next({
+      status: 404,
+      message: 'user not found',
+      errors: [{ resource: 'User', code: 'missing' }],
+    })
   }
 }

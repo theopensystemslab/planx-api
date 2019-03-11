@@ -36,8 +36,16 @@ export async function destroy(
   try {
     const flowRespository = getManager().getRepository(Flow)
     const flow = await flowRespository.findOne(request.params.id)
-    await flowRespository.delete(flow)
-    response.send(flow)
+    if (flow) {
+      await flowRespository.delete(flow)
+      response.send(flow)
+    } else {
+      next({
+        status: 404,
+        message: 'Not found',
+        errors: [{ resource: 'Flow', code: 'missing' }],
+      })
+    }
   } catch (e) {
     next(e)
   }

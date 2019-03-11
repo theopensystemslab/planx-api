@@ -19,6 +19,7 @@ export default class User {
   public id: string
 
   @Column({ unique: true, type: 'text', nullable: false })
+  @Length(4, 20)
   public username: string
 
   @Column({ type: 'text', nullable: false })
