@@ -10,6 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
+import Flow from './Flow'
 import Operation from './Operation'
 import Team from './Team'
 
@@ -43,6 +44,9 @@ export default class User {
 
   @OneToMany(type => Team, team => team.creator)
   createdTeams: Team[]
+
+  @OneToMany(type => Flow, flow => flow.creator)
+  createdFlows: Flow[]
 
   @ManyToOne(_type => Team, team => team.members)
   @JoinColumn({ name: 'team_id' })

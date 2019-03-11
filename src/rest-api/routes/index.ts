@@ -6,6 +6,8 @@ import * as Sessions from '../controllers/sessions'
 import * as Teams from '../controllers/teams'
 import * as Users from '../controllers/users'
 
+const withJwt = jwt({ secret: process.env.JWT_SECRET })
+
 const routes = Router()
 
 const homeRouter = Router()
@@ -20,16 +22,17 @@ const flowsRouter = Router()
 flowsRouter.get('/', Flows.list)
 flowsRouter.post('/', Flows.create)
 flowsRouter.delete('/:id', Flows.destroy)
-routes.use('/flows', jwt({ secret: process.env.JWT_SECRET }), flowsRouter)
+routes.use('/flows', withJwt, flowsRouter)
 
 const usersRouter = Router()
+usersRouter.get('/', withJwt, Users.list)
 usersRouter.post('/', Users.create)
 routes.use('/users', usersRouter)
 
 const teamsRouter = Router()
 teamsRouter.get('/', Teams.list)
 teamsRouter.post('/', Teams.create)
-routes.use('/teams', jwt({ secret: process.env.JWT_SECRET }), teamsRouter)
+routes.use('/teams', withJwt, teamsRouter)
 
 const errorRouter = Router()
 routes.use(

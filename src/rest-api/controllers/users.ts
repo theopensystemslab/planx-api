@@ -63,3 +63,19 @@ export async function create(
     next(e)
   }
 }
+
+export async function list(
+  _request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  const repository = getManager().getRepository(User)
+  const users = await repository
+    .createQueryBuilder('user')
+    .select(['user.id', 'user.username', 'user.team'])
+    .leftJoin('user.team', 'team')
+    .addSelect(['team.id', 'team.slug'])
+    .getMany()
+
+  response.send(users)
+}

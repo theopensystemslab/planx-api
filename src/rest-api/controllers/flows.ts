@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { getManager } from 'typeorm'
 import Flow from '../../db/entities/Flow'
+import Team from '../../db/entities/Team'
+import { RequestWithCurrentUser } from '../types'
 
 export async function list(
   _request: Request,
@@ -13,14 +15,24 @@ export async function list(
 }
 
 export async function create(
-  request: Request,
+  request: RequestWithCurrentUser,
   response: Response,
   next: NextFunction
 ) {
   const flowRespository = getManager().getRepository(Flow)
 
   try {
-    const newFlow = flowRespository.create(request.body)
+    // await flowRespository.preload(request.body)
+    // const newFlow = flowRespository.create(request.body)
+    const newFlow = new Flow()
+    newFlow.name = request.body.name.trim()
+    newFlow.creator = request.user
+
+    if (request.body['team.slug']) {
+      newFlow.team = await getManager()
+        .getRepository(Team)
+        .findOneOrFail({ slug: request.body['team.slug'] })
+    }
     await flowRespository.save(newFlow)
     response.send(newFlow)
   } catch (e) {
@@ -38,7 +50,7 @@ export async function destroy(
     const flow = await flowRespository.findOne(request.params.id)
     if (flow) {
       await flowRespository.delete(flow)
-      response.send(flow)
+      response.send({ message: 'ok' })
     } else {
       next({
         status: 404,

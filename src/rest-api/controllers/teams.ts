@@ -3,10 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 import { snakeCase } from 'lodash'
 import { getManager } from 'typeorm'
 import Team from '../../db/entities/Team'
-
-interface RequestWithCurrentUser extends Request {
-  user: any
-}
+import { RequestWithCurrentUser } from '../types'
 
 export async function create(
   request: RequestWithCurrentUser,

@@ -8,6 +8,7 @@ import {
 } from 'typeorm'
 import Operation from './Operation'
 import Team from './Team'
+import User from './User'
 
 @Entity({ name: 'flows' })
 export default class Flow {
@@ -29,4 +30,8 @@ export default class Flow {
 
   @OneToMany(type => Operation, operation => operation.flow)
   operations: Operation[]
+
+  @ManyToOne(_type => User, user => user.createdFlows)
+  @JoinColumn({ name: 'creator_id' })
+  creator: User
 }
