@@ -61,12 +61,12 @@ const sharedb = ShareDB({
 })
 
 io.on('connection', socket => {
+  const { clientsCount } = io.engine as any
+
   console.log(
-    `new client connected: ${socket.client.id}. ${
-      (io.engine as any).clientsCount
-    } clients online`
+    `new client connected: ${socket.client.id}. ${clientsCount} clients online`
   )
-  io.emit('clientsCount', (io.engine as any).clientsCount)
+  io.emit('clientsCount', clientsCount)
 
   let userId
   const stream = new JsonStream(socket, io)
@@ -126,12 +126,11 @@ io.on('connection', socket => {
   })
 
   socket.on('disconnect', () => {
+    const { clientsCount } = io.engine as any
     console.log(
-      `client disconnected: ${socket.client.id}. ${
-        (io.engine as any).clientsCount
-      } clients online`
+      `client disconnected: ${socket.client.id}. ${clientsCount} clients online`
     )
-    io.emit('clientsCount', (io.engine as any).clientsCount)
+    io.emit('clientsCount', clientsCount)
     // console.log("user left", { userId });
   })
 })
