@@ -4,7 +4,7 @@ const path = process.env.NODE_ENV === 'production' ? 'dist' : 'src'
 module.exports = {
   type: 'postgres',
   url: process.env.DATABASE_URL,
-  synchronize: DEBUG,
+  synchronize: false,
   logging: DEBUG,
   entities: [`${path}/db/entities/**/*.{js,ts}`],
   migrations: [`${path}/db/migrations/**/*.{js,ts}`],

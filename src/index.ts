@@ -61,7 +61,12 @@ const sharedb = ShareDB({
 })
 
 io.on('connection', socket => {
-  console.log(`new client connected: ${socket.client.id}`)
+  console.log(
+    `new client connected: ${socket.client.id}. ${
+      (io.engine as any).clientsCount
+    } clients online`
+  )
+  io.emit('clientsCount', (io.engine as any).clientsCount)
 
   let userId
   const stream = new JsonStream(socket, io)
@@ -109,7 +114,7 @@ io.on('connection', socket => {
   socket.on('join', (params, callback) => {
     socket.join(params.room)
     // stream.setRoom(params.room);
-    console.log(`${userId}  joined room  ${params.room}`)
+    console.log(`${userId} joined room  ${params.room}`)
     callback()
   })
 
@@ -121,7 +126,12 @@ io.on('connection', socket => {
   })
 
   socket.on('disconnect', () => {
-    console.log(`client disconnected: ${socket.client.id}`)
+    console.log(
+      `client disconnected: ${socket.client.id}. ${
+        (io.engine as any).clientsCount
+      } clients online`
+    )
+    io.emit('clientsCount', (io.engine as any).clientsCount)
     // console.log("user left", { userId });
   })
 })

@@ -19,6 +19,7 @@ class SocketAdapter {
     this.socket.on('connect', () => {
       this.readyState = STATE.OPEN
       log('connected')
+      log({ sending: { token: auth.jwt } })
       this.socket.emit('authenticate', { token: auth.jwt })
       this.onopen({ name: 'open' })
     })
