@@ -10,10 +10,16 @@ export async function create(
   next: NextFunction
 ) {
   const userRepository = getManager().getRepository(User)
+  const errors = []
 
-  if (!request.body.username || !request.body.password) {
-    response.status(422)
-    return response.send({ error: 'missing username and/or password' })
+  if (!request.body.username) {
+    errors.push({ resource: 'User', code: 'missing_field', field: 'username' })
+  }
+  if (!request.body.password) {
+    errors.push({ resource: 'User', code: 'missing_field', field: 'password' })
+  }
+  if (errors.length > 0) {
+    return next({ errors, status: 422, message: 'Missing field(s)' })
   }
 
   const user = await userRepository
@@ -41,14 +47,14 @@ export async function create(
         token,
       })
     } else {
-      next({
+      return next({
         status: 401,
         message: 'incorrect password',
         errors: [{ resource: 'User', code: 'invalid' }],
       })
     }
   } else {
-    next({
+    return next({
       status: 404,
       message: 'user not found',
       errors: [{ resource: 'User', code: 'missing' }],
