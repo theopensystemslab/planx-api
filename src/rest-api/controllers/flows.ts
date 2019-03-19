@@ -25,7 +25,8 @@ export async function create(
     // await flowRespository.preload(request.body)
     // const newFlow = flowRespository.create(request.body)
     const newFlow = new Flow()
-    newFlow.name = request.body.name.trim()
+    newFlow.id = request.body.id
+    newFlow.name = request.body.name && request.body.name.trim()
     newFlow.creator = request.user
 
     if (request.body['team.slug']) {
