@@ -22,7 +22,7 @@ export default class Flow {
   @Column()
   name: string
 
-  @Column({ type: 'integer', default: 0, nullable: false })
+  @Column({ type: 'integer', default: 1, nullable: false })
   version
 
   @Column({ type: 'jsonb', default: {}, nullable: false })
