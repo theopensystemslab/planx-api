@@ -1,8 +1,9 @@
-import { Pool, Query } from 'pg'
+import { Pool } from 'pg'
 import { DB } from 'sharedb'
 
 function PostgresDB(options): void {
   if (!(this instanceof PostgresDB)) return new PostgresDB(options)
+
   DB.call(this, options)
   this.closed = false
   this.pool = new Pool(options)
@@ -16,22 +17,11 @@ PostgresDB.prototype.close = function(callback) {
   if (callback) callback()
 }
 
-const submit = Query.prototype.submit
-// Query.prototype.submit = function() {
-//   const text = this.text;
-//   const values = this.values;
-//   const query = values.reduce((q, v, i) => q.replace(`$${i + 1}`, v), text);
-//   console.log(query);
-//   submit.apply(this, arguments);
-// };
-
-// ----------
-
 function rollback(client, done) {
-  client.query('ROLLBACK', err => {
-    return done(err)
-  })
+  client.query('ROLLBACK', err => done(err))
 }
+
+// console.log('DB----------------------------')
 
 // Persists an op and snapshot if it is for the next version. Calls back with
 // callback(err, succeeded)
@@ -43,6 +33,7 @@ PostgresDB.prototype.commit = function(
   _options,
   callback
 ) {
+  // console.log('A----------------------------')
   const { uId: actorId } = op.m
   /*
    * op: CreateOp {
@@ -70,10 +61,23 @@ PostgresDB.prototype.commit = function(
         }
       })
     }
+
+    // client.query(
+    //   'INSERT INTO flows (id, name, version, data, creator_id) VALUES ($1, $2, $3, $4, $5)',
+    //   [id, id.toString(), 1, op, actorId],
+    //   (err, _res) => {
+    //     if (err) {
+    //       // TODO: if err is "constraint violation", callback(null, false) instead
+    //       rollback(client, done)
+    //       callback(err)
+    //       return
+    //     }
+
+    // START  ------------------------------------------------------------
     client.query(
       // "SELECT max(version) AS max_version FROM operations WHERE collection = $1 AND doc_id = $2",
-      'SELECT max(version) AS max_version FROM operations WHERE flow_id = $1',
       // [collection, id],
+      'SELECT max(version) AS max_version FROM operations WHERE flow_id = $1',
       [id],
       (err, res) => {
         let max_version = res.rows[0].max_version
@@ -88,6 +92,7 @@ PostgresDB.prototype.commit = function(
             'INSERT INTO operations (flow_id, version, data, actor_id) VALUES ($1, $2, $3, $4)',
             [id, snapshot.v, op, actorId],
             (err, _res) => {
+              // console.log('AAA')
               if (err) {
                 // TODO: if err is "constraint violation", callback(null, false) instead
                 rollback(client, done)
@@ -95,11 +100,15 @@ PostgresDB.prototype.commit = function(
                 return
               }
               if (snapshot.v === 1) {
+                // console.log('CCC')
                 client.query(
                   // "INSERT INTO snapshots (collection, doc_id, doc_type, version, data) VALUES ($1, $2, $3, $4, $5)",
                   // "INSERT INTO flows (doc_id, doc_type, version, data) VALUES ($1, $2, $3, $4)",
-                  'UPDATE flows SET version = $1, data = $2, updated_at = $4 WHERE id = $3',
-                  [snapshot.v, snapshot.data, id, new Date().toISOString()],
+
+                  // 'UPDATE flows SET version = $1, data = $2, updated_at = $4 WHERE id = $3',
+                  // [snapshot.v, snapshot.data, id, new Date().toISOString()],
+                  'UPDATE flows SET version = $1, data = $2 WHERE id = $3',
+                  [snapshot.v, snapshot.data, id],
                   (err, _res) => {
                     // TODO:
                     // if the insert was successful and did insert, callback(null, true)
@@ -114,10 +123,14 @@ PostgresDB.prototype.commit = function(
                   }
                 )
               } else {
+                // console.log('DDD')
                 client.query(
                   // "UPDATE snapshots SET doc_type = $3, version = $4, data = $5 WHERE collection = $1 AND doc_id = $2 AND version = ($4 - 1)",
-                  'UPDATE flows SET version = $2, data = $3, updated_at = $4 WHERE id = $1 AND version = ($2 - 1)',
-                  [id, snapshot.v, snapshot.data, new Date().toISOString()],
+
+                  // 'UPDATE flows SET version = $2, data = $3, updated_at = $4 WHERE id = $1 AND version = ($2 - 1)',
+                  // [id, snapshot.v, snapshot.data, new Date().toISOString()],
+                  'UPDATE flows SET version = $2, data = $3 WHERE id = $1 AND version = ($2 - 1)',
+                  [id, snapshot.v, snapshot.data],
                   (err, _res) => {
                     // TODO:
                     // if any rows were updated, success
@@ -137,19 +150,25 @@ PostgresDB.prototype.commit = function(
         })
       }
     )
+    // END  ------------------------------------------------------------
+
+    //   }
+    // )
   })
 }
 
 // Get the named document from the database. The callback is called with (err,
 // snapshot). A snapshot with a version of zero is returned if the docuemnt
 // has never been created in the database.
-PostgresDB.prototype.getSnapshot = (
+PostgresDB.prototype.getSnapshot = function(
   _collection,
   id,
   _fields,
   _options,
   callback
-) => {
+) {
+  // console.log('B----------------------------')
+
   this.pool.connect((err, client, done) => {
     if (err) {
       done(client)
@@ -166,26 +185,23 @@ PostgresDB.prototype.getSnapshot = (
           callback(err)
           return
         }
+
+        let snapshot
+
         if (res.rows.length && res.rows[0].version) {
           const row = res.rows[0]
-          const snapshot = new PostgresSnapshot(
+          snapshot = new PostgresSnapshot(
             id,
             row.version,
             'http://sharejs.org/types/JSONv0',
             row.data,
             undefined // TODO: metadata
           )
-          callback(null, snapshot)
         } else {
-          const snapshot = new PostgresSnapshot(
-            id,
-            0,
-            null,
-            undefined,
-            undefined
-          )
-          callback(null, snapshot)
+          snapshot = new PostgresSnapshot(id, 0, null, undefined, undefined)
         }
+
+        callback(null, snapshot)
       }
     )
   })
@@ -208,6 +224,7 @@ PostgresDB.prototype.getOps = function(
   _options,
   callback
 ) {
+  // console.log('C----------------------------')
   this.pool.connect((err, client, done) => {
     if (err) {
       done(client)
