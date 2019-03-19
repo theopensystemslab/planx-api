@@ -72,14 +72,14 @@
     }
   },
   "jest": {
+    "verbose": true,
+    "preset": "ts-jest",
+    "testEnvironment": "node",
     "moduleFileExtensions": [
       "ts",
       "tsx",
       "js"
     ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "<rootDir>/config/test-preprocessor.js"
-    },
     "testMatch": [
       "**/__tests__/*.(test|spec).(ts|tsx|js)"
     ]
