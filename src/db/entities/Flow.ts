@@ -19,13 +19,13 @@ export default class Flow {
   @JoinColumn({ name: 'team_id' })
   team: Team
 
-  @Column()
+  @Column({ nullable: true })
   name: string
 
-  @Column({ type: 'integer', default: 1, nullable: false })
+  @Column({ type: 'integer', default: 1, nullable: true })
   version
 
-  @Column({ type: 'jsonb', default: {}, nullable: false })
+  @Column({ type: 'jsonb', nullable: true })
   data: object
 
   @OneToMany(type => Operation, operation => operation.flow)
