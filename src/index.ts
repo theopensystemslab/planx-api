@@ -9,6 +9,7 @@ import { verify } from 'jsonwebtoken'
 import * as methodOverride from 'method-override'
 import 'reflect-metadata'
 import * as ShareDB from 'sharedb'
+import * as shareDbAccess from 'sharedb-access'
 import * as IO from 'socket.io'
 import { createConnection } from 'typeorm'
 import { signS3Upload } from './lib/s3'
@@ -49,27 +50,51 @@ const io = IO(server)
 
 // sharedb/socket.io WebSockets API
 
-const db = new PostgresDB({
-  connectionString: process.env.DATABASE_URL,
-  ssl: JSON.parse(process.env.DB_SSL),
-})
-
 const sharedb = ShareDB({
-  db,
+  db: new PostgresDB({
+    connectionString: process.env.DATABASE_URL,
+    ssl: JSON.parse(process.env.DB_SSL),
+  }),
   disableDocAction: true,
   disableSpaceDelimitedActions: true,
 })
+shareDbAccess(sharedb)
+
+sharedb.allowRead('flows', async (docId, doc, session) => {
+  console.log('flows', session.userId)
+  // return session.userId === "john";
+  return true
+})
+
+sharedb.allowUpdate('flows', async (docId, oldDoc, newDoc, ops, session) => {
+  console.log('update', session.userId)
+  // return session.userId === "john";
+  return true
+})
+
+sharedb.allowCreate('flows', async (docId, doc, session) => {
+  console.log('create', session.userId)
+  // return session.userId === "john";
+  return true
+})
+
+sharedb.use('connect', (request, next) => {
+  if (request && request.req !== undefined) {
+    console.log(`setting userId: ${request.req.userId}`)
+    request.agent.connectSession = { userId: request.req.userId }
+  }
+  next()
+})
 
 io.on('connection', socket => {
+  let userId
+  const stream = new JsonStream(socket, io)
   const { clientsCount } = io.engine as any
 
   console.log(
     `new client connected: ${socket.client.id}. ${clientsCount} clients online`
   )
   io.emit('clientsCount', clientsCount)
-
-  let userId
-  const stream = new JsonStream(socket, io)
 
   socket.on('authenticate', ({ token }) => {
     console.log(`authenticating ${socket.client.id}`)
@@ -113,14 +138,14 @@ io.on('connection', socket => {
 
   socket.on('join', (params, callback) => {
     socket.join(params.room)
-    // stream.setRoom(params.room);
+    stream.setRoom(params.room)
     console.log(`${userId} joined room  ${params.room}`)
     callback()
   })
 
   socket.on('leave', (params, callback) => {
     socket.leave(params.room)
-    // stream.setRoom(null);
+    stream.setRoom(null)
     console.log(`${userId}  left room  ${params.room}`)
     callback()
   })
