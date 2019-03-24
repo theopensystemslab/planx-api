@@ -2,6 +2,7 @@ import { Router } from 'express'
 import * as jwt from 'express-jwt'
 import * as Flows from '../controllers/flows'
 import * as Home from '../controllers/home'
+import * as Postcodes from '../controllers/postcodes'
 import * as Sessions from '../controllers/sessions'
 import * as Teams from '../controllers/teams'
 import * as Users from '../controllers/users'
@@ -23,6 +24,10 @@ flowsRouter.get('/', Flows.list)
 flowsRouter.post('/', Flows.create)
 flowsRouter.delete('/:id', Flows.destroy)
 routes.use('/flows', withJwt, flowsRouter)
+
+const postcodesRouter = Router()
+postcodesRouter.get('/:postcode', Postcodes.search)
+routes.use('/postcodes', postcodesRouter)
 
 const usersRouter = Router()
 usersRouter.get('/', withJwt, Users.list)

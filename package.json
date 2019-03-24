@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.424.0",
+    "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
     "class-validator": "^0.9.1",
     "cors": "^2.8.5",

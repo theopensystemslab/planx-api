@@ -1,6 +1,6 @@
 import { validate } from 'class-validator'
 import { NextFunction, Request, Response } from 'express'
-import { snakeCase } from 'lodash'
+import * as snakeCase from 'lodash/snakeCase'
 import { getManager } from 'typeorm'
 import Team from '../../db/entities/Team'
 import { RequestWithCurrentUser } from '../types'
