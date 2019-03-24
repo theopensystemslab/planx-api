@@ -35,6 +35,7 @@ export async function search(
           y: result.Y_COORDINATE,
           lat: result.LAT,
           lng: result.LNG,
+          rawData: result,
         }
       }),
     })
