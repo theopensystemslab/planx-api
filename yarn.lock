@@ -4945,10 +4945,10 @@ sharedb-access@^5.0.0:
     debug "*"
     lodash "*"
 
-sharedb@^1.0.0-beta.20:
-  version "1.0.0-beta.20"
-  resolved "https://registry.yarnpkg.com/sharedb/-/sharedb-1.0.0-beta.20.tgz#833b788bd44b7584c2372964bbea8fc554bcb06a"
-  integrity sha512-NmVtqAsVC6EmkE3teuP5XIk9a9XFiRVv0cbQOu7G4VEgMvrlhXEFfGw0IGpEFHfWmVs414Te9fcnYII7QXyzKQ==
+sharedb@^1.0.0-beta.22:
+  version "1.0.0-beta.22"
+  resolved "https://registry.yarnpkg.com/sharedb/-/sharedb-1.0.0-beta.22.tgz#235a8a26293a68b80c61233e30417355bc51288a"
+  integrity sha512-gaBAZy1Cd/9/GdkXTAC8Y+q09llclRLI0/FoR93s93B711o93vfp6HjCGa4gxXatlnFp2O9uEJ/C/vAhWWWEhg==
   dependencies:
     arraydiff "^0.1.1"
     async "^1.4.2"
