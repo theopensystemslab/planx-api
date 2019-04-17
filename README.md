@@ -4,7 +4,7 @@
 
 ## Running Locally
 
-1. Create a postgres database, take note of the `postres://` url
+1. Create a postgres database, take note of the `postgres://` url
 
 2. Rename `.env-example` to `.env` and add the necessary vars
 
