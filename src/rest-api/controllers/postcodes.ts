@@ -2,39 +2,32 @@ import axios from 'axios'
 import { NextFunction, Request, Response } from 'express'
 import * as get from 'lodash/get'
 
-const { OS_API_KEY } = process.env
-
 export async function search(
   request: Request,
   response: Response,
   next: NextFunction
 ) {
-  const { postcode, srs = 'WGS84' } = request.params
-
-  const url = `https://api.ordnancesurvey.co.uk/places/v1/addresses/postcode?postcode=${postcode}&key=${OS_API_KEY}&output_srs=${srs}`
+  const url = `https://api.ideal-postcodes.co.uk/v1/postcodes/${
+    request.params.postcode
+  }?api_key=${process.env.IDEAL_POSTCODES_KEY}`
 
   try {
     const { data } = await axios.get(url)
 
     response.json({
-      localAuthority: get(
-        data,
-        'results[0].DPA.LOCAL_CUSTODIAN_CODE_DESCRIPTION',
-        'unknown'
-      ).toLowerCase(),
-      results: data.results.map(({ DPA: result }) => {
-        // console.log(result)
+      localAuthority: get(data, 'result[0].district', 'unknown')
+        .toLowerCase()
+        .replace(' ', ''),
+      results: data.result.map(result => {
         return {
-          id: result.UPDRN || result.UPRN,
-          name: result.ADDRESS.split(',')
-            .slice(0, -1)
-            .join(','),
-          uprn: result.UPRN,
-          updrn: result.UPDRN,
-          x: result.X_COORDINATE,
-          y: result.Y_COORDINATE,
-          lat: result.LAT,
-          lng: result.LNG,
+          id: result.udprn.toString(),
+          name: [result.line_1, result.line_2].filter(Boolean).join(', '),
+          uprn: result.udprn.toString(),
+          updrn: result.udprn.toString(),
+          x: result.eastings,
+          y: result.northings,
+          lat: result.latitude,
+          lng: result.longitude,
           rawData: result,
         }
       }),
