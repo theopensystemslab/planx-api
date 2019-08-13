@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { NextFunction, Request, Response } from 'express'
+import * as naturalSort from 'javascript-natural-sort'
+import * as groupBy from 'lodash/groupBy'
 import * as proj4 from 'proj4'
 
 proj4.defs([
@@ -41,40 +43,51 @@ export async function search(
 
     const { data } = await axios.get(url)
 
+    const results0 = data.map(result => {
+      const { x: longitude, y: latitude } = proj4.transform(
+        projections.ordnanceSurvey,
+        projections.standard,
+        [Number(result.X), Number(result.Y)]
+      )
+
+      return {
+        id: result.UPRN.toString(),
+        name: [
+          result.ORGANISATION,
+          result.SAO,
+          [result.PAO, result.STREET].filter(Boolean).join(' '),
+        ]
+          .filter(Boolean)
+          .join(', '),
+        uprn: result.UPRN.toString(),
+        updrn: result.UPRN.toString(),
+        x: Number(result.X),
+        y: Number(result.Y),
+        lat: latitude,
+        lng: longitude,
+        rawData: result,
+      }
+    })
+
+    const results1 = groupBy(results0, r => {
+      return [r.rawData.PAO, r.rawData.STREET].filter(Boolean).join(' ')
+    })
+
+    const results = []
+
+    Object.keys(results1)
+      .sort(naturalSort)
+      .forEach(k => {
+        Object.values(results1[k])
+          .sort((a: any, b: any) => {
+            return naturalSort(a.rawData.SAO, b.rawData.SAO)
+          })
+          .forEach(sorted => results.push(sorted))
+      })
+
     response.json({
       localAuthority,
-      results: data
-        .map(result => {
-          const { x: longitude, y: latitude } = proj4.transform(
-            projections.ordnanceSurvey,
-            projections.standard,
-            [Number(result.X), Number(result.Y)]
-          )
-
-          return {
-            id: result.UPRN.toString(),
-            name: [
-              result.ORGANISATION,
-              result.SAO,
-              [result.PAO, result.STREET].filter(Boolean).join(' '),
-            ]
-              .filter(Boolean)
-              .join(', '),
-            uprn: result.UPRN.toString(),
-            updrn: result.UPRN.toString(),
-            x: Number(result.X),
-            y: Number(result.Y),
-            lat: longitude,
-            lng: longitude,
-            rawData: result,
-          }
-        })
-        .sort((a, b) => {
-          const aa = [a.rawData.PAO, a.rawData.STREET].filter(Boolean).join(' ')
-          const bb = [b.rawData.PAO, b.rawData.STREET].filter(Boolean).join(' ')
-          // return bb < aa
-          return aa < bb ? -1 : aa > bb ? 1 : 0
-        }),
+      results,
     })
   } catch (e) {
     next(e)
