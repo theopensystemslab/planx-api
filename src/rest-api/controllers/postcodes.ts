@@ -45,15 +45,13 @@ export async function search(
       localAuthority,
       results: data
         .map(result => {
-          const { x: lng, y: lat } = proj4.transform(
+          const { x: longitude, y: latitude } = proj4.transform(
             projections.ordnanceSurvey,
             projections.standard,
             [Number(result.X), Number(result.Y)]
           )
 
           return {
-            lat,
-            lng,
             id: result.UPRN.toString(),
             name: [
               result.ORGANISATION,
@@ -66,6 +64,8 @@ export async function search(
             updrn: result.UPRN.toString(),
             x: Number(result.X),
             y: Number(result.Y),
+            lat: longitude,
+            lng: longitude,
             rawData: result,
           }
         })
