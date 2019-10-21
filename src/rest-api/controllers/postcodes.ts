@@ -39,7 +39,7 @@ export async function search(
       })
     }
 
-    const url = `https://llpg.planx.uk/LLPG_ALL?limit=100&POSTALLY_ADDRESSABLE=eq.Y&POSTCODE=eq.${postcode}`
+    const url = `https://llpg.planx.uk/addresses?limit=100&postcode=eq.${postcode}`
 
     const { data } = await axios.get(url)
 
@@ -47,22 +47,22 @@ export async function search(
       const { x: longitude, y: latitude } = proj4.transform(
         projections.ordnanceSurvey,
         projections.standard,
-        [Number(result.X), Number(result.Y)]
+        [Number(result.x), Number(result.y)]
       )
 
       return {
         id: result.UPRN.toString(),
         name: [
-          result.ORGANISATION,
-          result.SAO,
-          [result.PAO, result.STREET].filter(Boolean).join(' '),
+          result.organisation,
+          result.sao,
+          [result.pao, result.street].filter(Boolean).join(' '),
         ]
           .filter(Boolean)
           .join(', '),
         uprn: result.UPRN.toString(),
         updrn: result.UPRN.toString(),
-        x: Number(result.X),
-        y: Number(result.Y),
+        x: Number(result.x),
+        y: Number(result.y),
         lat: latitude,
         lng: longitude,
         rawData: result,
@@ -70,7 +70,7 @@ export async function search(
     })
 
     const results1 = groupBy(results0, r => {
-      return [r.rawData.PAO, r.rawData.STREET].filter(Boolean).join(' ')
+      return [r.rawData.pao, r.rawData.street].filter(Boolean).join(' ')
     })
 
     const results = []
@@ -80,7 +80,7 @@ export async function search(
       .forEach(k => {
         Object.values(results1[k])
           .sort((a: any, b: any) => {
-            return naturalSort(a.rawData.SAO, b.rawData.SAO)
+            return naturalSort(a.rawData.sao, b.rawData.sao)
           })
           .forEach(sorted => results.push(sorted))
       })
