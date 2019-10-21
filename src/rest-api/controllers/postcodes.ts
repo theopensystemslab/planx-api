@@ -30,9 +30,10 @@ export async function search(
     )
 
     const postcode = pdata.result.postcode
+
     const localAuthority = pdata.result.admin_district.toLowerCase()
 
-    if (localAuthority !== 'southwark') {
+    if (!['southwark', 'wycombe'].includes(localAuthority)) {
       return response.json({
         localAuthority,
         results: [],
@@ -40,6 +41,7 @@ export async function search(
     }
 
     const url = `https://llpg.planx.uk/addresses?limit=100&postcode=eq.${postcode}`
+    console.log({ url })
 
     const { data } = await axios.get(url)
 
