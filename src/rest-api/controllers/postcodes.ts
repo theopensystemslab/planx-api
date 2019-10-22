@@ -33,7 +33,7 @@ export async function search(
 
     const localAuthority = pdata.result.admin_district.toLowerCase()
 
-    if (!['southwark', 'wycombe'].includes(localAuthority)) {
+    if (!['southwark', 'wycombe', 'lambeth'].includes(localAuthority)) {
       return response.json({
         localAuthority,
         results: [],
