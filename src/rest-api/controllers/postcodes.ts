@@ -98,7 +98,7 @@ export async function search(
           },
         })),
       }
-      return output
+      return response.json(output)
     }
 
     if (!['southwark', 'wycombe', 'lambeth'].includes(localAuthority)) {
