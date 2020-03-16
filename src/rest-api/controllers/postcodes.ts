@@ -33,13 +33,6 @@ export async function search(
 
     const localAuthority = pdata.result.admin_district.toLowerCase()
 
-    if (!['southwark', 'wycombe', 'lambeth'].includes(localAuthority)) {
-      return response.json({
-        localAuthority,
-        results: [],
-      })
-    }
-
     if (localAuthority === 'canterbury') {
       const tokenData = await axios({
         method: 'post',
@@ -99,6 +92,13 @@ export async function search(
         })),
       }
       return output
+    }
+
+    if (!['southwark', 'wycombe', 'lambeth'].includes(localAuthority)) {
+      return response.json({
+        localAuthority,
+        results: [],
+      })
     }
 
     const url = `https://llpg.planx.uk/addresses?limit=100&postcode=eq.${postcode}`
