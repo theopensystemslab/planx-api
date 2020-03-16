@@ -42,8 +42,8 @@ export async function search(
         )}&password=${encodeURIComponent(process.env.CANTERBURY_PASSWORD)}`,
       })
       const token = tokenData.data
+
       let url = `https://mapping.canterbury.gov.uk/arcgis/rest/services/PlanX/LLPG_Point_Data/MapServer/find`
-      console.log(url)
 
       const params = {
         token,
@@ -58,6 +58,8 @@ export async function search(
           .map(key => `${key}=${escape(params[key])}`)
           .join('&'),
       ].join('?')
+
+      console.log(process.env.CANTERBURY_USERNAME, url)
 
       const { data } = await axios.get(url)
 
