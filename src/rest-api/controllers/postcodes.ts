@@ -67,36 +67,44 @@ export async function search(
 
       const output = {
         localAuthority: 'canterbury',
-        results: data.results.map(result => ({
-          id: result.attributes.UPRN.toString(),
-          name:
-            result.attributes.FULL_ADDRESS.split(',').length > 3
-              ? result.attributes.FULL_ADDRESS.split(',')
-                  .slice(0, -3)
-                  .join(',')
-              : result.attributes.FULL_ADDRESS,
-          uprn: result.attributes.UPRN,
-          updrn: result.attributes.UPRN,
-          x: result.geometry.x,
-          y: result.geometry.y,
-          lat: null,
-          lng: null,
-          rawData: {
-            UPRN: result.attributes.UPRN,
-            team: 'canterbury',
-            organisation: result.attributes.ORGANISATION,
-            sao: result.attributes.SAO_DESC,
-            pao: result.attributes.PAO_DESC,
-            street: result.attributes.STREET_NAME,
-            town: result.attributes.TOWN_NAME,
-            postcode: result.attributes.POSTCODE,
-            blpu_code: null,
-            planx_description: null,
-            planx_value: null,
+        results: data.results.map(result => {
+          const { x: longitude, y: latitude } = proj4.transform(
+            projections.ordnanceSurvey,
+            projections.standard,
+            [result.geometry.x, result.geometry.y]
+          )
+
+          return {
+            id: result.attributes.UPRN.toString(),
+            name:
+              result.attributes.FULL_ADDRESS.split(',').length > 3
+                ? result.attributes.FULL_ADDRESS.split(',')
+                    .slice(0, -3)
+                    .join(',')
+                : result.attributes.FULL_ADDRESS,
+            uprn: result.attributes.UPRN,
+            updrn: result.attributes.UPRN,
             x: result.geometry.x,
             y: result.geometry.y,
-          },
-        })),
+            lat: latitude,
+            lng: longitude,
+            rawData: {
+              UPRN: result.attributes.UPRN,
+              team: 'canterbury',
+              organisation: result.attributes.ORGANISATION,
+              sao: result.attributes.SAO_DESC,
+              pao: result.attributes.PAO_DESC,
+              street: result.attributes.STREET_NAME,
+              town: result.attributes.TOWN_NAME,
+              postcode: result.attributes.POSTCODE,
+              blpu_code: null,
+              planx_description: null,
+              planx_value: null,
+              x: result.geometry.x,
+              y: result.geometry.y,
+            },
+          }
+        }),
       }
       return response.json(output)
     }
