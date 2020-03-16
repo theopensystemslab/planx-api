@@ -40,6 +40,67 @@ export async function search(
       })
     }
 
+    if (localAuthority === 'canterbury') {
+      const tokenData = await axios({
+        method: 'post',
+        url: 'https://mapping.canterbury.gov.uk/arcgis/tokens/generateToken',
+        data: `username=${encodeURIComponent(
+          process.env.CANTERBURY_USERNAME
+        )}&password=${encodeURIComponent(process.env.CANTERBURY_PASSWORD)}`,
+      })
+      const token = tokenData.data
+      let url = `https://mapping.canterbury.gov.uk/arcgis/rest/services/PlanX/LLPG_Point_Data/MapServer/find`
+      console.log(url)
+
+      const params = {
+        token,
+        searchText: postcode,
+        searchFields: 'POSTCODE',
+        layers: 'LLPG_Point_Data',
+        f: 'pjson',
+      }
+      url = [
+        url,
+        Object.keys(params)
+          .map(key => `${key}=${escape(params[key])}`)
+          .join('&'),
+      ].join('?')
+
+      const { data } = await axios.get(url)
+
+      const output = {
+        localAuthority: 'canterbury',
+        results: data.results.map(result => ({
+          id: result.attributes.UPRN.toString(),
+          name: result.attributes.FULL_ADDRESS.split(',')
+            .slice(0, -3)
+            .join(','),
+          uprn: result.attributes.UPRN,
+          updrn: result.attributes.UPRN,
+          x: result.geometry.x,
+          y: result.geometry.y,
+          lat: null,
+          lng: null,
+          rawData: {
+            UPRN: result.attributes.UPRN,
+            team: 'canterbury',
+            organisation: result.attributes.ORGANISATION,
+            sao: result.attributes.SAO_DESC,
+            pao: result.attributes.PAO_DESC,
+            street: result.attributes.STREET_NAME,
+            town: result.attributes.TOWN_NAME,
+            postcode: result.attributes.POSTCODE,
+            blpu_code: null,
+            planx_description: null,
+            planx_value: null,
+            x: result.geometry.x,
+            y: result.geometry.y,
+          },
+        })),
+      }
+      return output
+    }
+
     const url = `https://llpg.planx.uk/addresses?limit=100&postcode=eq.${postcode}`
     console.log({ url })
 
