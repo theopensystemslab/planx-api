@@ -63,6 +63,8 @@ export async function search(
 
       const { data } = await axios.get(url)
 
+      console.log(data)
+
       const output = {
         localAuthority: 'canterbury',
         results: data.results.map(result => ({
