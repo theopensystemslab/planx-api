@@ -89,7 +89,7 @@ export async function search(
             lat: latitude,
             lng: longitude,
             rawData: {
-              UPRN: result.attributes.UPRN,
+              UPRN: Number(result.attributes.UPRN),
               team: 'canterbury',
               organisation: result.attributes.ORGANISATION,
               sao: result.attributes.SAO_DESC,
