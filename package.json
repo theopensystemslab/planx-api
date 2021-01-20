@@ -66,7 +66,7 @@
     "reflect-metadata": "^0.1.10",
     "sharedb": "^1.0.0-beta.20",
     "sharedb-access": "^5.0.0",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.4.0",
     "stream": "^0.0.2",
     "typeorm": "0.2.16",
     "url": "^0.11.0"
